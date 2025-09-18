@@ -16,10 +16,9 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.all('/webhook', (req, res) => {
-    console.log('Webhook received:', req.method, req.body);
-    console.log('Headers:', req.headers);
-    console.log('Query Params:', req.query);
+app.post('/webhook', (req, res) => {
+    console.log('Webhook received:', JSON.stringify(req.body, null, 2));
+    console.log('Query Params:', JSON.stringify(req.query, null, 2));
     res.status(200).send('Webhook received');
 });
 
