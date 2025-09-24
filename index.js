@@ -28,7 +28,7 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-app.post('/slack', (req, res) => {
+app.get('/slack', (req, res) => {
     console.log('Header:', JSON.stringify(req.headers, null, 2));
     console.log('Slack Webhook received:', JSON.stringify(req.body, null, 2));
     console.log('Query Params:', JSON.stringify(req.query, null, 2));
