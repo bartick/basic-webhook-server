@@ -30,6 +30,11 @@ app.listen(PORT, () => {
 });
 
 app.get('/slack', (req, res) => {
+    console.log('Query Params:', JSON.stringify(req.query, null, 2));
+    res.status(200).send('Slack endpoint hit');
+});
+
+app.get('/slack/get', (req, res) => {
     axios.get(`http://localhost:8010/anonymous/v1/slack/auth?code=${req.query.code}&state=${req.query.state}`)
         .then(response => {
             res.status(200).json(response.data);
