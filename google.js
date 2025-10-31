@@ -1,3 +1,5 @@
+const { google } = require('googleapis');
+
 async function watchCalendar(oauth2Client, webhookUrl) {
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
