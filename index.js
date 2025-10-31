@@ -62,6 +62,15 @@ const oauth2Client = new google.auth.OAuth2(
   REDIRECT_URI
 );
 
+app.get('/google/auth', (req, res) => {
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: SCOPES,
+  });
+  res.send(`<a href="${authUrl}">Authenticate with Google</a>`);
+});
+
+
 app.get('/oauth2callback', async (req, res) => {
   const code = req.query.code;
   const { tokens } = await oauth2Client.getToken(code);
