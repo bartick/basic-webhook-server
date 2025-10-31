@@ -12,6 +12,11 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+const {
+    watchCalendar,
+    deleteChannel
+} = require('./google');
+
 // Sample route
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -43,4 +48,50 @@ app.get('/slack/get', (req, res) => {
             console.error('Error fetching Slack auth:', error);
             res.status(500).send('Error fetching Slack auth');
         });
+});
+
+const {
+    CLIENT_ID,
+    SECRET_ID,
+    REDIRECT_URI
+} = require('./config');
+
+const oauth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  SECRET_ID,
+  REDIRECT_URI
+);
+
+app.get('/oauth2callback', async (req, res) => {
+  const code = req.query.code;
+  const { tokens } = await oauth2Client.getToken(code);
+  oauth2Client.setCredentials(tokens);
+
+  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+  const events = await calendar.events.list({
+    calendarId: 'primary',
+    timeMin: (new Date()).toISOString(),
+    maxResults: 10,
+    singleEvents: true,
+    orderBy: 'startTime',
+  });
+
+  console.log('Upcoming events:', JSON.stringify(events.data, null, 2));
+
+  const eventList = events.data.items.map(event => {
+    const start = event.start.dateTime || event.start.date;
+    return `<li>${start} - ${event.summary}</li>`;
+  }).join('');
+
+  watchCalendar(oauth2Client, 'https://ringover.bartick.me/webhook');
+
+  res.send(`<h1>Upcoming Events</h1><ul>${eventList}</ul>`);
+});
+
+app.get('/stop', (req, res) => {
+    const channelId = req.query.channelId;
+    const resourceId = req.query.resourceId;
+
+    deleteChannel(oauth2Client, channelId, resourceId);
+    res.send('Channel deletion requested');
 });
