@@ -54,7 +54,8 @@ app.get('/slack/get', (req, res) => {
 const {
     CLIENT_ID,
     SECRET_ID,
-    REDIRECT_URI
+    REDIRECT_URI,
+    SCOPES
 } = require('./config');
 
 const oauth2Client = new google.auth.OAuth2(
