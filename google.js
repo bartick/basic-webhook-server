@@ -1,4 +1,4 @@
-export async function watchCalendar(oauth2Client, webhookUrl) {
+async function watchCalendar(oauth2Client, webhookUrl) {
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
   const res = await calendar.events.watch({
@@ -15,7 +15,7 @@ export async function watchCalendar(oauth2Client, webhookUrl) {
   console.log('Watch response:', res.data);
 }
 
-export function deleteChannel(oauth2Client, channelId, resourceId) {
+function deleteChannel(oauth2Client, channelId, resourceId) {
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
   calendar.channels.stop({
@@ -31,3 +31,8 @@ export function deleteChannel(oauth2Client, channelId, resourceId) {
     console.log('Channel stopped:', res.data);
   });
 }
+
+module.exports = {
+    watchCalendar,
+    deleteChannel
+};
